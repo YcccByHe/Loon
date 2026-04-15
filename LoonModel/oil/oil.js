@@ -1,5 +1,5 @@
 const ARG = (typeof $argument === "object" && $argument !== null) ? $argument : {};
-const API_KEY = ARG.ApiKey || "";
+const API_KEY = ARG.ApiKey || $persistentStore.read("天行key") || "";
 const PROVINCE = ARG.Province || "陕西";
 
 
@@ -20,6 +20,7 @@ function queryOilPrice() {
     console.log(url);
     $httpClient.get({ url, timeout: 10 }, (error, response, data) => {
         if (error) {
+        	console.log("error:" + error);
             $notification.post("⛽ 油价查询失败", "网络错误", String(error));
             $done();
             return;
