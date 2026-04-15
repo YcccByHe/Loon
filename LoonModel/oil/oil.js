@@ -34,7 +34,7 @@ if (!API_KEY) {
 // 3) 请求油价 API
 function queryOilPrice() {
     const url = `https://apis.tianapi.com/oilprice/index?key=${API_KEY}&prov=${encodeURIComponent(PROVINCE)}`;
-
+    console.log(url);
     $httpClient.get({ url, timeout: 10 }, (error, response, data) => {
         if (error) {
             $notification.post("⛽ 油价查询失败", "网络错误", String(error));
