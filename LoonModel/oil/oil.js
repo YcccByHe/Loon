@@ -1,9 +1,3 @@
-// ============================================
-// 油价查询脚本 (Loon)
-// cron 定时 + generic 手动 共用
-// 数据源：天行数据 tianapi.com
-// ============================================
-
 const ARG = (typeof $argument === "object" && $argument !== null) ? $argument : {};
 const API_KEY = ARG.ApiKey || "";
 const PROVINCE = ARG.Province || "陕西";
