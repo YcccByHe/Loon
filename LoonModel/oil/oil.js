@@ -2,11 +2,6 @@ const ARG = (typeof $argument === "object" && $argument !== null) ? $argument : 
 const API_KEY = ARG.ApiKey || $persistentStore.read("天行key") || "";
 const PROVINCE = ARG.Province || "陕西";
 
-console.log("ARG:", JSON.stringify(ARG));
-console.log("store 天行key:", $persistentStore.read("天行key"));
-console.log("final API_KEY length:", API_KEY.length, "PROVINCE:", PROVINCE);
-
-
 if (!API_KEY) {
     $notification.post(
         "⛽ 油价查询",
@@ -22,7 +17,7 @@ if (!API_KEY) {
 function queryOilPrice() {
     const url = `https://apis.tianapi.com/oilprice/index?key=${API_KEY}&prov=${encodeURIComponent(PROVINCE)}`;
     console.log(url);
-    $httpClient.get({ url, timeout: 10 }, (error, response, data) => {
+    $httpClient.get({ url, timeout: 5000 }, (error, response, data) => {
         if (error) {
         	console.log("error:" + error);
             $notification.post("⛽ 油价查询失败", "网络错误", String(error));
