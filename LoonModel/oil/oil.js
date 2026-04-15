@@ -2,9 +2,11 @@ const ARG = (typeof $argument === "object" && $argument !== null) ? $argument : 
 const API_KEY = ARG.ApiKey || $persistentStore.read("天行key") || "";
 const PROVINCE = ARG.Province || "陕西";
 
-const SCRIPT_NAME = (typeof $script !== "undefined" && $script) ? $script.name : "";
-const IS_MANUAL = SCRIPT_NAME === "立即查询油价";
-console.log("$script.name: " + SCRIPT_NAME + " IS_MANUAL: " + IS_MANUAL);
+const IS_MANUAL = (typeof $script !== "undefined" && $script && $script.name === "立即查询油价");
+
+function notify(title, subtitle, body) {
+    if (!IS_MANUAL) $notification.post(title, subtitle, body);
+}
 
 function done(title, content) {
     if (IS_MANUAL) $done({ title: title, content: content });
@@ -14,7 +16,7 @@ function done(title, content) {
 if (!API_KEY) {
     const title = "⛽ 油价查询";
     const tip = "请在 Loon → 插件 → 油价查询 → 参数设置里填入天行 API Key";
-    $notification.post(title, "未配置 API Key", tip);
+    notify(title, "未配置 API Key", tip);
     done(title, "未配置 API Key\n" + tip);
 } else {
     queryOilPrice();
@@ -23,11 +25,10 @@ if (!API_KEY) {
 
 function queryOilPrice() {
     const url = `https://apis.tianapi.com/oilprice/index?key=${API_KEY}&prov=${encodeURIComponent(PROVINCE)}`;
-    console.log(url);
     $httpClient.get({ url, timeout: 5000 }, (error, response, data) => {
         if (error) {
             console.log("error:" + error);
-            $notification.post("⛽ 油价查询失败", "网络错误", String(error));
+            notify("⛽ 油价查询失败", "网络错误", String(error));
             done("⛽ 油价查询失败", "网络错误：" + String(error));
             return;
         }
@@ -37,19 +38,19 @@ function queryOilPrice() {
             body = JSON.parse(data);
         } catch (e) {
             const raw = String(data).slice(0, 120);
-            $notification.post("⛽ 油价查询失败", "响应解析错误", raw);
+            notify("⛽ 油价查询失败", "响应解析错误", raw);
             done("⛽ 油价查询失败", "响应解析错误：" + raw);
             return;
         }
 
         if (body.code !== 200 || !body.result) {
             const msg = body.msg || "未知错误";
-            $notification.post("⛽ 油价查询失败", `API 返回 ${body.code}`, msg);
+            notify("⛽ 油价查询失败", `API 返回 ${body.code}`, msg);
             done("⛽ 油价查询失败", `API 返回 ${body.code}：${msg}`);
             return;
         }
 
-        const out = sendNotification(body.result);
+        const out = sendOilPrice(body.result);
         done(out.title, out.content);
     });
 }
@@ -82,7 +83,7 @@ function diffText(result) {
 }
 
 
-function sendNotification(r) {
+function sendOilPrice(r) {
     const title = `⛽ ${r.prov} 今日油价`;
     const subtitle = `更新时间：${r.time || ""}`;
     const body =
@@ -91,6 +92,6 @@ function sendNotification(r) {
         `98# 汽油：¥${r.p98} / 升\n` +
         ` 0# 柴油：¥${r.p0} / 升` +
         diffText(r);
-    $notification.post(title, subtitle, body);
+    notify(title, subtitle, body);
     return { title, content: subtitle + "\n" + body };
 }
