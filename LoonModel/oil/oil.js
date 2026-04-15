@@ -2,6 +2,8 @@ const ARG = (typeof $argument === "object" && $argument !== null) ? $argument : 
 const API_KEY = ARG.ApiKey || $persistentStore.read("天行key") || "";
 const PROVINCE = ARG.Province || "陕西";
 
+const TANK_L = 58;
+
 const IS_MANUAL = (typeof $script !== "undefined" && $script && $script.name === "立即查询油价");
 
 function notify(title, subtitle, body) {
@@ -65,13 +67,13 @@ function diffText(result) {
     try {
         const prev = JSON.parse(last);
         const parts = [];
-        for (const oil of ["p92", "p95", "p98", "p0"]) {
+        for (const oil of ["p92", "p95", "p98"]) {
             const cur = parseFloat(result[oil]);
             const pre = parseFloat(prev[oil]);
             if (!isNaN(cur) && !isNaN(pre)) {
                 const d = +(cur - pre).toFixed(2);
                 if (d !== 0) {
-                    const label = oil === "p0" ? "0#" : oil.slice(1) + "#";
+                    const label = oil.slice(1) + "#";
                     parts.push(`${label}${d > 0 ? "↑" : "↓"}${Math.abs(d).toFixed(2)}`);
                 }
             }
@@ -85,12 +87,17 @@ function diffText(result) {
 
 function sendOilPrice(r) {
     const title = `⛽ ${r.prov} 今日油价`;
-    const subtitle = `更新时间：${r.time || ""}`;
+    const timeStr = r.time ? String(r.time).slice(0, 16) : "";
+    const subtitle = `更新时间：${timeStr}`;
+    const full = g => {
+        const p = parseFloat(r[g]);
+        return isNaN(p) ? "?" : Math.round(p * TANK_L);
+    };
     const body =
         `92# 汽油：¥${r.p92} / 升\n` +
         `95# 汽油：¥${r.p95} / 升\n` +
         `98# 汽油：¥${r.p98} / 升\n` +
-        ` 0# 柴油：¥${r.p0} / 升` +
+        `加满${TANK_L}L：92# ¥${full("p92")}  95# ¥${full("p95")}  98# ¥${full("p98")}` +
         diffText(r);
     notify(title, subtitle, body);
     return { title, content: subtitle + "\n" + body };
