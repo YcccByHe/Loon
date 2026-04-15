@@ -2,6 +2,10 @@ const ARG = (typeof $argument === "object" && $argument !== null) ? $argument : 
 const API_KEY = ARG.ApiKey || $persistentStore.read("天行key") || "";
 const PROVINCE = ARG.Province || "陕西";
 
+console.log("ARG:", JSON.stringify(ARG));
+console.log("store 天行key:", $persistentStore.read("天行key"));
+console.log("final API_KEY length:", API_KEY.length, "PROVINCE:", PROVINCE);
+
 
 if (!API_KEY) {
     $notification.post(
