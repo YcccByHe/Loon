@@ -9,5 +9,5 @@ Province = select,"陕西","北京","上海","天津","重庆","广东","江苏"
 CronTime = input,"0 8 * * *",tag=定时表达式,desc=Cron 格式（分 时 日 月 周），默认每天 08:00
 
 [Script]
-cron "{CronTime}" script-path=https://raw.githubusercontent.com/<YOUR_GH_USER>/<YOUR_REPO>/main/oil/oil.js,tag=油价每日推送,timeout=20,argument="key={API_Key}&prov={Province}"
-generic script-path=https://raw.githubusercontent.com/<YOUR_GH_USER>/<YOUR_REPO>/main/oil/oil.js,tag=立即查询油价,timeout=20,argument="key={API_Key}&prov={Province}"
+cron "{CronTime}" script-path=https://raw.githubusercontent.com/YcccByHe/Loon/refs/heads/main/LoonModel/oil/oil.js,tag=油价每日推送,timeout=20,argument="key={API_Key}&prov={Province}"
+generic script-path=https://raw.githubusercontent.com/YcccByHe/Loon/refs/heads/main/LoonModel/oil/oil.js,tag=立即查询油价,timeout=20,argument="key={API_Key}&prov={Province}"
