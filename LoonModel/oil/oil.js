@@ -1,5 +1,5 @@
 const ARG = (typeof $argument === "object" && $argument !== null) ? $argument : {};
-const API_KEY = ARG.ApiKey || "";
+const API_KEY = ARG.ApiKey || $persistentStore.read("天行key") || "";
 const PROVINCE = ARG.Province || "陕西";
 
 
