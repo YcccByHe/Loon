@@ -4,10 +4,9 @@
 #!tag = 生活工具
 
 [Argument]
-API_Key = input,"",tag=天行 API Key,desc=在 tianapi.com 注册后在控制台获取，免费 100 次/天
+ApiKey = input,"",tag=天行 API Key,desc=在 tianapi.com 注册后在控制台获取，免费 100 次/天
 Province = select,"陕西","北京","上海","天津","重庆","广东","江苏","浙江","福建","山东","河北","山西","河南","湖北","湖南","辽宁","吉林","黑龙江","安徽","江西","海南","四川","贵州","云南","甘肃","青海","内蒙古","广西","西藏","宁夏","新疆",tag=省份,desc=不带"省"字
-CronTime = input,"0 8 * * *",tag=定时表达式,desc=Cron 格式（分 时 日 月 周），默认每天 08:00
 
 [Script]
-cron "{CronTime}" script-path=https://raw.githubusercontent.com/YcccByHe/Loon/refs/heads/main/LoonModel/oil/oil.js,tag=油价每日推送,timeout=20,argument="key={API_Key}&prov={Province}"
-generic script-path=https://raw.githubusercontent.com/YcccByHe/Loon/refs/heads/main/LoonModel/oil/oil.js,tag=立即查询油价,timeout=20,argument="key={API_Key}&prov={Province}"
+cron "0 8 * * *" script-path=https://raw.githubusercontent.com/YcccByHe/Loon/main/LoonModel/oil/oil.js,tag=油价每日推送,timeout=20,argument=[{ApiKey},{Province}]
+generic script-path=https://raw.githubusercontent.com/YcccByHe/Loon/main/LoonModel/oil/oil.js,tag=立即查询油价,timeout=20,argument=[{ApiKey},{Province}]

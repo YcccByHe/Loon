@@ -4,22 +4,11 @@
 // 数据源：天行数据 tianapi.com
 // ============================================
 
-// 1) 解析从插件传来的 argument 字符串（形如 "key=xxx&prov=陕西"）
-function parseArgument(raw) {
-    if (!raw) return {};
-    return Object.fromEntries(
-        raw.split("&").map(pair => {
-            const [k, v = ""] = pair.split("=");
-            return [k, decodeURIComponent(v)];
-        })
-    );
-}
+const ARG = (typeof $argument === "object" && $argument !== null) ? $argument : {};
+const API_KEY = ARG.ApiKey || "";
+const PROVINCE = ARG.Province || "陕西";
 
-const args = parseArgument($argument);
-const API_KEY = args.key;
-const PROVINCE = args.prov || "陕西";
 
-// 2) 参数校验：没填 key 就提示用户去配置
 if (!API_KEY) {
     $notification.post(
         "⛽ 油价查询",
@@ -31,7 +20,7 @@ if (!API_KEY) {
     queryOilPrice();
 }
 
-// 3) 请求油价 API
+
 function queryOilPrice() {
     const url = `https://apis.tianapi.com/oilprice/index?key=${API_KEY}&prov=${encodeURIComponent(PROVINCE)}`;
 
@@ -62,7 +51,7 @@ function queryOilPrice() {
     });
 }
 
-// 4) 与上次数据对比，给出 ↑↓ 变动
+
 function diffText(result) {
     const storeKey = `oil_price_last_${PROVINCE}`;
     const last = $persistentStore.read(storeKey);
@@ -89,7 +78,7 @@ function diffText(result) {
     }
 }
 
-// 5) 推送通知
+
 function sendNotification(r) {
     $notification.post(
         `⛽ ${r.prov} 今日油价`,
